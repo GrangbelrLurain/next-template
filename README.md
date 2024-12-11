@@ -22,3 +22,5 @@
 - prettier
 - husky
 - lint-staged
+
+<a href="https://www.codefactor.io/repository/github/grangbelrlurain/nexttemplate"><img src="https://www.codefactor.io/repository/github/grangbelrlurain/nexttemplate/badge" alt="CodeFactor" /></a>
