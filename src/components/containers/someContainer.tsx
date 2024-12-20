@@ -1,31 +1,32 @@
-import { memo, useState } from 'react';
-
-import useUser from '@/hooks/useUser';
-import clsx from 'clsx';
-import SomePresentational from '../presentationals/somePresentational';
-
-const MemoizedSomePresentational = memo(SomePresentational);
+import { useSharedData } from '@/hooks/useSharedData';
 
 function SomeContainer() {
-  const { users, getUsers, isPending } = useUser();
+  const userId = 'user123'; // 실제로는 인증 시스템에서 가져옴
+  const { shareData } = useSharedData(userId, 'encryptionKey');
 
-  const [page, setPage] = useState(1);
-
-  const handleClick = () => {
-    setPage(page + 1);
-    getUsers({ limit: '10', page: page.toString() });
-  };
+  const handleShare = async () =>
+    /** targetUserId: string to-do: 사용자 공유 기능*/
+    {
+      await shareData(
+        {
+          message: 'Hello!',
+          timestamp: new Date(),
+        },
+        /** targetUserId: string to-do: 사용자 공유 기능*/
+      );
+    };
 
   return (
-    <div className={clsx('pt-40 transition-opacity', isPending && 'opacity-50')}>
-      <button className="btn" onClick={handleClick} type="button">
-        click {page}
+    <div>
+      <button
+        onClick={
+          () => handleShare()
+          /** targetUserId: string to-do: 사용자 공유 기능*/
+          // 'user456'
+        }
+      >
+        Share with User
       </button>
-      <ul className="grid grid-cols-9 gap-4">
-        {users.map((user) => (
-          <MemoizedSomePresentational key={user.id} user={user} />
-        ))}
-      </ul>
     </div>
   );
 }
