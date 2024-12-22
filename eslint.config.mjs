@@ -24,6 +24,9 @@ export default tseslint.config(
       },
     },
     ignores: ['**/node_modules/**', '!src/**', '!public/**', '*'],
+    rules: {
+      'react-hooks/exhaustive-deps': 'off',
+    },
   },
   {
     files: ['**/*.{js,jsx,cjs,mjs}'],

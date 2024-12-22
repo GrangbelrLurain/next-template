@@ -1,26 +1,31 @@
-import { TTestQuery } from '@/pages/api/user';
 import { userStore } from '@/stores/userStore';
 import { useCallback, useTransition } from 'react';
+import { useAuth } from './useAuth';
+import { createUser } from '@/schemas/user';
 
 const useUser = () => {
+  const { getUserInfo } = useAuth();
+
   const { users, setUsers } = userStore();
 
   const [isPending, startTransition] = useTransition();
 
-  const getUsers = useCallback(
-    (query: TTestQuery) => {
-      const urlQuery = new URLSearchParams(query);
+  const getUser = useCallback(() => {
+    startTransition(async () => {
+      try {
+        const res = await getUserInfo();
+        if (!res) throw new Error('user not found');
+        console.log(res);
+        const user = createUser(res);
+        if (!user) throw new Error('invalid user');
+        setUsers(users.concat(user));
+      } catch (error) {
+        console.error(error);
+      }
+    });
+  }, [users, setUsers, getUserInfo]);
 
-      startTransition(async () => {
-        const res = await fetch(`/api/user?${urlQuery.toString()}`);
-        const data = await res.json();
-        setUsers(users.concat(...data));
-      });
-    },
-    [users, setUsers],
-  );
-
-  return { users, getUsers, isPending };
+  return { user: users[0], getUser, isPending };
 };
 
 export default useUser;

@@ -2,9 +2,9 @@ import { z } from 'zod';
 import { generateMock } from '@anatine/zod-mock';
 
 const userSchema = z.object({
-  id: z.number(),
+  userId: z.preprocess((val) => Number(val), z.number()),
+  profileImage: z.string(),
   name: z.string(),
-  age: z.number().max(200),
   email: z.string().email(),
 });
 

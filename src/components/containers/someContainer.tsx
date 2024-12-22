@@ -1,32 +1,29 @@
-import { useSharedData } from '@/hooks/useSharedData';
+import { useAuth } from '@/hooks/useAuth';
+import useUser from '@/hooks/useUser';
+import { useEffect } from 'react';
 
 function SomeContainer() {
-  const userId = 'user123'; // 실제로는 인증 시스템에서 가져옴
-  const { shareData } = useSharedData(userId, 'encryptionKey');
+  const { signInWithGoogle } = useAuth();
 
-  const handleShare = async () =>
-    /** targetUserId: string to-do: 사용자 공유 기능*/
-    {
-      await shareData(
-        {
-          message: 'Hello!',
-          timestamp: new Date(),
-        },
-        /** targetUserId: string to-do: 사용자 공유 기능*/
-      );
-    };
+  const handleShare = async () => {
+    signInWithGoogle();
+  };
+
+  const { getUser, isPending, user } = useUser();
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   return (
-    <div>
-      <button
-        onClick={
-          () => handleShare()
-          /** targetUserId: string to-do: 사용자 공유 기능*/
-          // 'user456'
-        }
-      >
-        Share with User
-      </button>
+    <div className="pt-40 max-w-screen-sm mx-auto">
+      {isPending ? (
+        <div>Loading...</div>
+      ) : user ? (
+        <div>안녕하세요 {user.name}님, 오늘도 즐거운 하루 되세요!</div>
+      ) : (
+        <button onClick={() => handleShare()}>Sign In with Google</button>
+      )}
     </div>
   );
 }

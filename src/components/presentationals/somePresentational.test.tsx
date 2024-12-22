@@ -10,7 +10,7 @@ test('데이터 랜더링 테스트', () => {
 
   // ASSERT
   expect(queryByText(user.name)).toBeInTheDocument();
-  expect(queryByText(user.id.toString())).toBeNull();
+  expect(queryByText(user.userId.toString())).toBeNull();
   expect(queryByText(user.email)).toBeInTheDocument();
-  expect(queryByText(user.age.toString())).toBeInTheDocument();
+  expect(queryByText(user.profileImage.toString())).toBeInTheDocument();
 });
