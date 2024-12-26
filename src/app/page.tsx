@@ -1,5 +1,7 @@
 import SomeContainer from '@/components/containers/someContainer';
 
-export default function Home() {
+const Page = () => {
   return <SomeContainer />;
-}
+};
+
+export default Page;

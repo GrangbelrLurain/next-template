@@ -1,5 +1,8 @@
+'use client';
+
+import Logger from '@/utils/error/errorConvention';
 import Cookies from 'js-cookie';
-import { useRouter } from 'next/router';
+import { usePathname, useRouter } from 'next/navigation';
 
 /** to-do: 사용자 인증 기능 추가 */
 const GOOGLE_AUTH_ENDPOINT = 'https://accounts.google.com/o/oauth2/v2/auth';
@@ -7,8 +10,14 @@ const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
 const REDIRECT_URI = process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI;
 
 const getSignInParams = (state: string) => {
-  if (!CLIENT_ID) throw new Error('Google Client ID가 설정되지 않았습니다.');
-  if (!REDIRECT_URI) throw new Error('Redirect URI가 설정되지 않았습니다.');
+  if (!CLIENT_ID) {
+    Logger.group('getSignInParams').log(3, 'Google Client ID가 설정되지 않았습니다.').end();
+    return;
+  }
+  if (!REDIRECT_URI) {
+    Logger.group('getSignInParams').log(3, 'Redirect URI가 설정되지 않았습니다.').end();
+    return;
+  }
   return {
     client_id: CLIENT_ID,
     redirect_uri: REDIRECT_URI,
@@ -30,12 +39,14 @@ const cookieToken = {
 
 export function useAuth() {
   const router = useRouter();
+  const pathname = usePathname();
 
   const signInWithGoogle = () => {
     const state = crypto.randomUUID();
     sessionStorage.setItem('oauth_state', state);
 
     const params = getSignInParams(state);
+    if (!params) return;
 
     const authUrl = `${GOOGLE_AUTH_ENDPOINT}?${new URLSearchParams(params)}`;
     router.push(authUrl);
@@ -43,10 +54,10 @@ export function useAuth() {
 
   const signOutWithGoogle = () => {
     cookieToken.removeGoogle();
-    if (router.pathname !== '/') {
+    if (pathname !== '/') {
       router.push('/');
     } else {
-      router.reload();
+      router.refresh();
     }
   };
 

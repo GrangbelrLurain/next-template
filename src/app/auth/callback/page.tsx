@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/hooks/useAuth';
 
-export default function AuthCallback() {
+export default function Page() {
   const router = useRouter();
   const { handleAuthCallback } = useAuth();
 

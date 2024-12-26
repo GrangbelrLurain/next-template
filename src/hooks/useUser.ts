@@ -2,6 +2,7 @@ import { userStore } from '@/stores/userStore';
 import { useCallback, useTransition } from 'react';
 import { useAuth } from './useAuth';
 import { createUser } from '@/schemas/user';
+import Logger from '@/utils/error/errorConvention';
 
 const useUser = () => {
   const { getUserInfo } = useAuth();
@@ -11,17 +12,21 @@ const useUser = () => {
   const [isPending, startTransition] = useTransition();
 
   const getUser = useCallback(() => {
-    startTransition(async () => {
-      try {
-        const res = await getUserInfo();
-        if (!res) throw new Error('user not found');
-        console.log(res);
-        const user = createUser(res);
-        if (!user) throw new Error('invalid user');
-        setUsers(users.concat(user));
-      } catch (error) {
-        console.error(error);
-      }
+    startTransition(() => {
+      const logger = Logger.group('getUser');
+      getUserInfo()
+        .then((res) => {
+          if (!res) return logger.log(0, 'user not found');
+          const user = createUser(res);
+          if (!user) return logger.log(3, 'invalid user');
+          setUsers(users.concat(user));
+        })
+        .catch((error) => {
+          logger.log(3, error);
+        })
+        .finally(() => {
+          logger.end();
+        });
     });
   }, [users, setUsers, getUserInfo]);
 

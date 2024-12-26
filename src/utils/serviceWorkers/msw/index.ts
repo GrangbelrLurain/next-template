@@ -10,7 +10,9 @@ const initMSW = async () => {
 
     const handlers = [...userHandlers];
 
-    return setupWorker(...handlers).start();
+    return setupWorker(...handlers).start({
+      onUnhandledRequest: 'bypass',
+    });
   }
 };
 
